@@ -4,5 +4,6 @@ const { UserController } = require('../../../controllers');
 const { UserMiddleware } = require('../../../middlewares');
 
 router.post('/signup', UserMiddleware.validateSignUp, UserController.signUp);
+router.post('/signin', UserMiddleware.validateSignIn, UserController.signIn);
 
 module.exports = router;

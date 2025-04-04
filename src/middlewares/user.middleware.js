@@ -39,3 +39,19 @@ module.exports.validateSignUp = async (req, res, next) => {
 
   next();
 };
+
+// validate signin
+module.exports.validateSignIn = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // first check if user is sending all the data
+  if (!email || !password) {
+    ErrorResponse.message = 'Something went wrong while sign up';
+    ErrorResponse.error = new AppError(
+      ['Request data missing'],
+      StatusCodes.BAD_REQUEST
+    );
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+  next();
+};

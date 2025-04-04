@@ -1,5 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
+const bcrpyt = require('bcrypt');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -7,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
+
+    async validatePassword(password) {
+      return await bcrpyt.compare(password, this.password);
+    }
     static associate(models) {
       // define association here
     }
@@ -44,6 +49,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  User.beforeCreate((user) => {});
+  User.beforeCreate(async (user) => {
+    const hashedPassword = await bcrpyt.hash(user.password, 10);
+    user.password = hashedPassword;
+  });
   return User;
 };
