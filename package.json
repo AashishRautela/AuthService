@@ -1,0 +1,41 @@
+{
+  "name": "authservice",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx nodemon src/index.js",
+    "prepare": "husky",
+    "format": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AashishRautela/AuthService.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AashishRautela/AuthService/issues"
+  },
+  "homepage": "https://github.com/AashishRautela/AuthService#readme",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "http-status-codes": "^2.3.0",
+    "nodemon": "^3.1.9",
+    "pg": "^8.14.1",
+    "sequelize": "^6.37.7",
+    "sequelize-cli": "^6.6.2",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.3"
+  },
+  "lint-staged": {
+    "**/*.{js,json,md}": "prettier --write"
+  }
+}
