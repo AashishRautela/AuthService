@@ -20,6 +20,7 @@
   "homepage": "https://github.com/AashishRautela/AuthService#readme",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
@@ -28,6 +29,7 @@
     "pg": "^8.14.1",
     "sequelize": "^6.37.7",
     "sequelize-cli": "^6.6.2",
+    "validator": "^13.15.0",
     "winston": "^3.17.0"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
-const { StatusCodes } = require("http-status-codes");
-const AppError = require("../utils/errors/appError");
+const { StatusCodes } = require('http-status-codes');
+const AppError = require('../utils/errors/appError');
 
 class CrudRepository {
   constructor(model) {
@@ -18,11 +18,11 @@ class CrudRepository {
   async destroy(data) {
     const response = await this.model.destroy({
       where: {
-        id: data,
-      },
+        id: data
+      }
     });
     if (!response) {
-      throw new AppError(["Resouce Not found"], StatusCodes.NOT_FOUND);
+      throw new AppError(['Resouce Not found'], StatusCodes.NOT_FOUND);
     }
     return response;
   }
@@ -30,7 +30,7 @@ class CrudRepository {
   async get(data) {
     const response = await this.model.findByPk(data);
     if (!response) {
-      throw new AppError(["Resouce Not found"], StatusCodes.NOT_FOUND);
+      throw new AppError(['Resouce Not found'], StatusCodes.NOT_FOUND);
     }
     return response;
   }
@@ -43,12 +43,22 @@ class CrudRepository {
   async update(id, data) {
     const response = await this.model.update(data, {
       where: {
-        id: id,
-      },
+        id: id
+      }
     });
     if (!response[0]) {
-      throw new AppError(["Resouce Not found"], StatusCodes.NOT_FOUND);
+      throw new AppError(['Resouce Not found'], StatusCodes.NOT_FOUND);
     }
+    return response;
+  }
+
+  async find(data) {
+    console.log('data-->', data);
+    const response = await this.model.findOne({
+      where: {
+        ...data
+      }
+    });
     return response;
   }
 }

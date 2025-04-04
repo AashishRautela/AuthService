@@ -18,7 +18,8 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
       lastName: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: ''
       },
       email: {
         type: DataTypes.STRING,
@@ -42,5 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true
     }
   );
+
+  User.beforeCreate((user) => {});
   return User;
 };
