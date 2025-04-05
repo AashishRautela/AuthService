@@ -21,7 +21,24 @@ module.exports.create = async (data) => {
     if (error instanceof AppError) throw error;
     console.log('error', error);
     throw new AppError(
-      ['Something went wrong while creating booking'],
+      ['Something went wrong while signup'],
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+module.exports.getUserDetails = async (data) => {
+  try {
+    const user = await UserRepository.get(data);
+    return user;
+  } catch (error) {
+    if (error.statusCode === StatusCodes.NOT_FOUND) {
+      throw new AppError(['User not found'], StatusCodes.NOT_FOUND);
+    }
+    if (error instanceof AppError) throw error;
+    console.log('error', error);
+    throw new AppError(
+      ['Something went wrong while getting user details'],
       StatusCodes.INTERNAL_SERVER_ERROR
     );
   }

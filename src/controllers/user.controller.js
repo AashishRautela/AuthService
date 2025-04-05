@@ -27,3 +27,17 @@ module.exports.signIn = async (req, res) => {
       .json(ErrorResponse);
   }
 };
+
+module.exports.getUserDetails = async (req, res) => {
+  try {
+    const user = await UserService.getUserDetails(req.params.id);
+    SuccessResponse.data = user;
+
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res
+      .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(ErrorResponse);
+  }
+};

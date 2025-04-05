@@ -3,6 +3,7 @@ const { Model } = require('sequelize');
 const bcrpyt = require('bcrypt');
 const { Enums } = require('../utils/common');
 const { ROLES } = require('../utils/common/enum');
+const { generateRandomColorLight } = require('../utils/helpers');
 const { ADMIN, USER, SUPERADMIN } = Enums.ROLES;
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -48,7 +49,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         defaultValue: USER,
         values: [ADMIN, SUPERADMIN, USER],
-        allowNull: false
+        allowNull: false,
+        validate: {
+          isIn: [[ADMIN, SUPERADMIN, USER]]
+        }
+      },
+      profileColor: {
+        type: DataTypes.STRING,
+        defaultValue: '#2EB6C9'
       }
     },
     {
@@ -61,6 +69,8 @@ module.exports = (sequelize, DataTypes) => {
   User.beforeCreate(async (user) => {
     const hashedPassword = await bcrpyt.hash(user.password, 10);
     user.password = hashedPassword;
+    const randomColor = await generateRandomColorLight();
+    user.profileColor = randomColor;
   });
   return User;
 };
