@@ -18,7 +18,11 @@ module.exports.signUp = async (req, res) => {
 
 module.exports.signIn = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const user = req.user;
+    const { accessToken, refreshToken } =
+      await UserService.generateTokens(user);
+    SuccessResponse.data = { accessToken, refreshToken };
+    return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
     console.log('error', error);
     ErrorResponse.error = error;

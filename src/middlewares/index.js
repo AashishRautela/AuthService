@@ -1,3 +1,4 @@
 module.exports = {
-  UserMiddleware: require('./user.middleware.js')
+  UserMiddleware: require('./user.middleware.js'),
+  AuthMiddlewate: require('./auth.middleware.js')
 };

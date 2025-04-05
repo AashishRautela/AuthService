@@ -6,7 +6,6 @@ module.exports.create = async (data) => {
   try {
     const { email } = data;
     const isExists = await UserRepository.find({ email: email });
-    console.log('isExists', isExists);
 
     if (isExists) {
       throw new AppError(
@@ -39,6 +38,40 @@ module.exports.getUserDetails = async (data) => {
     console.log('error', error);
     throw new AppError(
       ['Something went wrong while getting user details'],
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+module.exports.findOne = async (data) => {
+  try {
+    const user = await UserRepository.find({ email: data });
+    return user;
+  } catch (error) {
+    console.log('error in findone', error);
+    if (error.statusCode === StatusCodes.NOT_FOUND) {
+      throw new AppError(['User not found'], StatusCodes.NOT_FOUND);
+    }
+    if (error instanceof AppError) throw error;
+    console.log('error', error);
+    throw new AppError(
+      ['Something went wrong while getting user details'],
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+module.exports.generateTokens = async (user) => {
+  try {
+    const accessToken = await user.generateAccessToken();
+    const refreshToken = await user.generateRefreshToken();
+
+    user.refreshToken = refreshToken;
+    await user.save();
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new AppError(
+      ['Something went wrong while sign in'],
       StatusCodes.INTERNAL_SERVER_ERROR
     );
   }

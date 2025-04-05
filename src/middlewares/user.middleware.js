@@ -2,6 +2,7 @@ const { StatusCodes } = require('http-status-codes');
 const AppError = require('../utils/errors/appError');
 const { ErrorResponse } = require('../utils/common');
 const validator = require('validator');
+const { UserService } = require('../service');
 
 // validate signup
 module.exports.validateSignUp = async (req, res, next) => {
@@ -53,5 +54,30 @@ module.exports.validateSignIn = async (req, res, next) => {
     );
     return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
   }
+
+  let user;
+  try {
+    user = await UserService.findOne(email);
+  } catch (error) {
+    ErrorResponse.message = 'Something went wrong while sign up';
+    ErrorResponse.error = new AppError(
+      ['User not found'],
+      StatusCodes.NOT_FOUND
+    );
+    return res.status(StatusCodes.NOT_FOUND).json(ErrorResponse);
+  }
+
+  const isPasswordValid = await user.validatePassword(password);
+
+  if (!isPasswordValid) {
+    ErrorResponse.message = 'Something went wrong while sign up';
+    ErrorResponse.error = new AppError(
+      ['Incorrect Password'],
+      StatusCodes.BAD_REQUEST
+    );
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+
+  req.user = user;
   next();
 };

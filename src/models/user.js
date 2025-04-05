@@ -1,10 +1,17 @@
 'use strict';
 const { Model } = require('sequelize');
-const bcrpyt = require('bcrypt');
+const bcrypt = require('bcrypt');
 const { Enums } = require('../utils/common');
 const { ROLES } = require('../utils/common/enum');
 const { generateRandomColorLight } = require('../utils/helpers');
 const { ADMIN, USER, SUPERADMIN } = Enums.ROLES;
+const jwt = require('jsonwebtoken');
+const {
+  JWT_SECRET,
+  ACCESS_TOKEN_EXPIRE,
+  REFRESH_TOKEN_SECRET,
+  REFRESH_TOKEN_SECRET_EXPIRE
+} = require('../config').ServerConfig;
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -14,7 +21,26 @@ module.exports = (sequelize, DataTypes) => {
      */
 
     async validatePassword(password) {
-      return await bcrpyt.compare(password, this.password);
+      return await bcrypt.compare(password, this.password);
+    }
+
+    async generateAccessToken() {
+      console.log('JWT_SECRET', JWT_SECRET);
+      const token = jwt.sign(
+        { id: this.id, role: this.role, email: this.email },
+        JWT_SECRET,
+        { expiresIn: ACCESS_TOKEN_EXPIRE }
+      );
+      return token;
+    }
+
+    async generateRefreshToken() {
+      const token = jwt.sign(
+        { id: this.id, role: this.role, email: this.email },
+        REFRESH_TOKEN_SECRET,
+        { expiresIn: REFRESH_TOKEN_SECRET_EXPIRE }
+      );
+      return token;
     }
     static associate(models) {
       // define association here
@@ -57,6 +83,10 @@ module.exports = (sequelize, DataTypes) => {
       profileColor: {
         type: DataTypes.STRING,
         defaultValue: '#2EB6C9'
+      },
+      refreshToken: {
+        type: DataTypes.STRING,
+        defaultValue: ''
       }
     },
     {
@@ -71,6 +101,12 @@ module.exports = (sequelize, DataTypes) => {
     user.password = hashedPassword;
     const randomColor = await generateRandomColorLight();
     user.profileColor = randomColor;
+  });
+
+  User.beforeUpdate(async (user) => {
+    if (user.changed('password')) {
+      user.password = await bcrypt.hash(user.password, 10);
+    }
   });
   return User;
 };
