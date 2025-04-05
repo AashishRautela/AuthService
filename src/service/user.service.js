@@ -1,6 +1,8 @@
 const { StatusCodes } = require('http-status-codes');
 const { UserRepository } = require('../repositories');
 const AppError = require('../utils/errors/appError');
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config/server.config');
 
 module.exports.create = async (data) => {
   try {
@@ -76,3 +78,40 @@ module.exports.generateTokens = async (user) => {
     );
   }
 };
+
+module.exports.isAuthenticated = async (data) => {
+  try {
+    const response = veriyToken(data);
+
+    if (!response) {
+      throw new AppError(['Invalid token'], StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+    const user = await UserRepository.get(response.id);
+    return user?.id;
+  } catch (error) {
+    if (error.statusCode === StatusCodes.NOT_FOUND) {
+      throw new AppError(['User not found'], StatusCodes.NOT_FOUND);
+    }
+
+    if (error instanceof AppError) throw error;
+    throw new AppError(
+      ['Something went wrong while sign in'],
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
+
+function veriyToken(token) {
+  try {
+    const response = jwt.verify(token, JWT_SECRET);
+    return response;
+  } catch (error) {
+    if (error.message == 'invalid token') {
+      throw new AppError(['Invalid token'], StatusCodes.BAD_REQUEST);
+    }
+    throw new AppError(
+      ['Something went wrong while verifying token'],
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}

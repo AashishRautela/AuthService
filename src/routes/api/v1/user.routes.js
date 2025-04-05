@@ -5,6 +5,7 @@ const { UserMiddleware } = require('../../../middlewares');
 
 router.post('/signup', UserMiddleware.validateSignUp, UserController.signUp);
 router.post('/signin', UserMiddleware.validateSignIn, UserController.signIn);
+router.get('/isAuthenticated', UserController.isAuthenticated);
 router.get('/:id', UserController.getUserDetails);
 
 module.exports = router;

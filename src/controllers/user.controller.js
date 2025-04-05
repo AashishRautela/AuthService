@@ -1,7 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const { UserService } = require('../service');
 const { ErrorResponse, SuccessResponse } = require('../utils/common');
-const { UserRepository } = require('../repositories');
 
 module.exports.signUp = async (req, res) => {
   try {
@@ -35,6 +34,22 @@ module.exports.getUserDetails = async (req, res) => {
   try {
     const user = await UserService.getUserDetails(req.params.id);
     SuccessResponse.data = user;
+
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res
+      .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(ErrorResponse);
+  }
+};
+
+module.exports.isAuthenticated = async (req, res) => {
+  try {
+    const token = req.headers['x-access-token'];
+    const response = await UserService.isAuthenticated(token);
+
+    SuccessResponse.data = response;
 
     return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
