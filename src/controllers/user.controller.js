@@ -19,14 +19,6 @@ module.exports.signUp = async (req, res) => {
 module.exports.signIn = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    const user = await UserRepository.find({ email: email });
-    console.log('user', user);
-    if (await user.validatePassword(password)) {
-      return res.send('ok');
-    } else {
-      return res.send('no');
-    }
   } catch (error) {
     console.log('error', error);
     ErrorResponse.error = error;

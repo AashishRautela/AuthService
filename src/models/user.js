@@ -1,6 +1,9 @@
 'use strict';
 const { Model } = require('sequelize');
 const bcrpyt = require('bcrypt');
+const { Enums } = require('../utils/common');
+const { ROLES } = require('../utils/common/enum');
+const { ADMIN, USER, SUPERADMIN } = Enums.ROLES;
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -40,6 +43,12 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           len: [6, 30]
         }
+      },
+      role: {
+        type: DataTypes.STRING,
+        defaultValue: USER,
+        values: [ADMIN, SUPERADMIN, USER],
+        allowNull: false
       }
     },
     {
