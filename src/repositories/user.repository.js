@@ -22,9 +22,9 @@ class UserRepository extends CrudRepository {
       attributes: [
         'email',
         'id',
-        'role',
         'createdAt',
         'firstName',
+        'lastName',
         'profileColor'
       ]
     });
