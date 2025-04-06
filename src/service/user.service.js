@@ -3,6 +3,8 @@ const { UserRepository } = require('../repositories');
 const AppError = require('../utils/errors/appError');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/server.config');
+const db = require('../models');
+const { Role } = require('../models');
 
 module.exports.create = async (data) => {
   try {
@@ -16,7 +18,18 @@ module.exports.create = async (data) => {
       );
     }
 
-    const user = await UserRepository.create(data);
+    const user = await db.sequelize.transaction(async (t) => {
+      const userPayload = {
+        email: email,
+        firstName: data?.firstName,
+        password: data?.password,
+        lastName: data?.lastName || ''
+      };
+      const userResponse = await UserRepository.createUser(userPayload, t);
+      const role = await Role.findByPk(data?.role || 2);
+      await userResponse.addRole(role, { transaction: t });
+      return true;
+    });
     return user;
   } catch (error) {
     if (error instanceof AppError) throw error;

@@ -8,6 +8,11 @@ class UserRepository extends CrudRepository {
     super(User);
   }
 
+  async createUser(data, transaction) {
+    const response = await User.create(data, { transaction: transaction });
+    return response;
+  }
+
   async ifUserExists(data) {
     const response = await this.model.findOne({
       where: {
