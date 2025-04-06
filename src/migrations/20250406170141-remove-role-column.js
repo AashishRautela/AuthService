@@ -1,11 +1,6 @@
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
-
-const { Enums } = require('../utils/common');
-const { ROLES } = require('../utils/common/enum');
-const { ADMIN, USER, SUPERADMIN } = Enums.ROLES;
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     /**
@@ -14,13 +9,7 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-
-    await queryInterface.addColumn('Users', 'role', {
-      type: Sequelize.STRING,
-      allowNull: false,
-      defaultValue: USER,
-      allowNull: false
-    });
+    await queryInterface.removeColumn('Users', 'role');
   },
 
   async down(queryInterface, Sequelize) {
@@ -30,6 +19,5 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-    await queryInterface.removeColumn('Users', 'role');
   }
 };

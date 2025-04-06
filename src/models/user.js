@@ -25,7 +25,6 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     async generateAccessToken() {
-      console.log('JWT_SECRET', JWT_SECRET);
       const token = jwt.sign(
         { id: this.id, role: this.role, email: this.email },
         JWT_SECRET,
@@ -44,6 +43,9 @@ module.exports = (sequelize, DataTypes) => {
     }
     static associate(models) {
       // define association here
+      this.belongsToMany(models.Role, {
+        through: 'User_Roles'
+      });
     }
   }
   User.init(
@@ -71,15 +73,6 @@ module.exports = (sequelize, DataTypes) => {
           len: [6, 30]
         }
       },
-      role: {
-        type: DataTypes.STRING,
-        defaultValue: USER,
-        values: [ADMIN, SUPERADMIN, USER],
-        allowNull: false,
-        validate: {
-          isIn: [[ADMIN, SUPERADMIN, USER]]
-        }
-      },
       profileColor: {
         type: DataTypes.STRING,
         defaultValue: '#2EB6C9'
@@ -97,7 +90,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   User.beforeCreate(async (user) => {
-    const hashedPassword = await bcrpyt.hash(user.password, 10);
+    const hashedPassword = await bcrypt.hash(user.password, 10);
     user.password = hashedPassword;
     const randomColor = await generateRandomColorLight();
     user.profileColor = randomColor;

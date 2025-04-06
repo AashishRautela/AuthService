@@ -7,6 +7,15 @@ class UserRepository extends CrudRepository {
     super(User);
   }
 
+  async ifUserExists(data) {
+    const response = await this.model.findOne({
+      where: {
+        ...data
+      }
+    });
+    return response;
+  }
+
   async get(data) {
     const response = await this.model.findByPk(data, {
       attributes: [

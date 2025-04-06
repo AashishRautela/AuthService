@@ -7,7 +7,7 @@ const { JWT_SECRET } = require('../config/server.config');
 module.exports.create = async (data) => {
   try {
     const { email } = data;
-    const isExists = await UserRepository.find({ email: email });
+    const isExists = await UserRepository.ifUserExists({ email: email });
 
     if (isExists) {
       throw new AppError(
