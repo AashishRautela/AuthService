@@ -13,9 +13,9 @@ const BOOKING_STATUS = {
 };
 
 const ROLES = {
-  USER: 'user',
-  ADMIN: 'admin',
-  SUPERADMIN: 'superadmin'
+  CUSTOMER: 'CUSTOMER',
+  ADMIN: 'ADMIN',
+  AIRLINE_BUSSINESS: 'AIRLINE_BUSSINESS'
 };
 
 module.exports = {

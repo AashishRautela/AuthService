@@ -1,7 +1,8 @@
 const CrudRepository = require('./crud.repository.js');
-const { User } = require('../models');
+const { User, Role } = require('../models');
 const AppError = require('../utils/errors/appError.js');
 const { StatusCodes } = require('http-status-codes');
+const { ADMIN } = require('../utils/common').Enums.ROLES;
 class UserRepository extends CrudRepository {
   constructor() {
     super(User);
@@ -31,6 +32,23 @@ class UserRepository extends CrudRepository {
       throw new AppError(['Resouce Not found'], StatusCodes.NOT_FOUND);
     }
     return response;
+  }
+
+  async isAdmin(id) {
+    const user = await User.findByPk(id);
+    if (!user) {
+      throw new AppError(['User not found'], StatusCodes.NOT_FOUND);
+    }
+    const role = await Role.findOne({
+      where: {
+        name: ADMIN
+      }
+    });
+
+    if (!role) {
+      throw new AppError(['Role not found'], StatusCodes.NOT_FOUND);
+    }
+    return user.hasRole(role);
   }
 }
 

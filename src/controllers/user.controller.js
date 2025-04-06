@@ -59,3 +59,16 @@ module.exports.isAuthenticated = async (req, res) => {
       .json(ErrorResponse);
   }
 };
+
+module.exports.isAdmin = async (req, res) => {
+  try {
+    const isAdmin = await UserService.isAdmin(req.params.id);
+    SuccessResponse.data = isAdmin;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    return res
+      .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+      .json(ErrorResponse);
+  }
+};

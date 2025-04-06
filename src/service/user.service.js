@@ -101,6 +101,18 @@ module.exports.isAuthenticated = async (data) => {
   }
 };
 
+module.exports.isAdmin = async (userId) => {
+  try {
+    const isAdmin = await UserRepository.isAdmin(userId);
+    return isAdmin;
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    throw new AppError(
+      ['Something went wrong checking user role'],
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+};
 function veriyToken(token) {
   try {
     const response = jwt.verify(token, JWT_SECRET);
